@@ -1,6 +1,6 @@
 using HomToMadad.Common.Models;
 using HomToMadad.Common.Entities;
-using Microsoft.Data.SqlClient;
+using Npgsql;
 
 namespace HomToMadad.Services.SemanticLayer
 {
@@ -9,11 +9,11 @@ namespace HomToMadad.Services.SemanticLayer
         public async Task<SemanticLayerDefinition> ScanAsync(ConnectionEO conn)
         {
             var connStr = BuildConnectionString(conn);
-            using var sqlConn = new SqlConnection(connStr);
-            await sqlConn.OpenAsync();
+            using var pgConn = new NpgsqlConnection(connStr);
+            await pgConn.OpenAsync();
 
-            var tables = await ReadTablesAsync(sqlConn);
-            var relationships = await ReadForeignKeysAsync(sqlConn);
+            var tables = await ReadTablesAsync(pgConn);
+            var relationships = await ReadForeignKeysAsync(pgConn);
 
             return new SemanticLayerDefinition
             {
@@ -28,8 +28,8 @@ namespace HomToMadad.Services.SemanticLayer
         public async Task ProfileAsync(SemanticLayerDefinition layer, ConnectionEO conn)
         {
             var connStr = BuildConnectionString(conn);
-            using var sqlConn = new SqlConnection(connStr);
-            await sqlConn.OpenAsync();
+            using var pgConn = new NpgsqlConnection(connStr);
+            await pgConn.OpenAsync();
 
             foreach (var table in layer.Tables)
             {
@@ -38,11 +38,11 @@ namespace HomToMadad.Services.SemanticLayer
                     if (!IsProfilableType(col.DataType)) continue;
                     try
                     {
-                        var sql = $"SELECT CAST(MIN([{col.Name}]) AS NVARCHAR(200))," +
-                                  $"CAST(MAX([{col.Name}]) AS NVARCHAR(200))," +
-                                  $"COUNT(DISTINCT [{col.Name}]) FROM [{table.Name}]";
+                        var sql = $"SELECT CAST(MIN(\"{col.Name}\") AS TEXT), " +
+                                  $"CAST(MAX(\"{col.Name}\") AS TEXT), " +
+                                  $"COUNT(DISTINCT \"{col.Name}\") FROM \"{table.Name}\"";
 
-                        using var cmd = new SqlCommand(sql, sqlConn) { CommandTimeout = 30 };
+                        using var cmd = new NpgsqlCommand(sql, pgConn) { CommandTimeout = 30 };
                         using var reader = await cmd.ExecuteReaderAsync();
                         if (await reader.ReadAsync())
                         {
@@ -61,8 +61,8 @@ namespace HomToMadad.Services.SemanticLayer
             try
             {
                 var connStr = BuildConnectionString(conn);
-                using var sqlConn = new SqlConnection(connStr);
-                await sqlConn.OpenAsync();
+                using var pgConn = new NpgsqlConnection(connStr);
+                await pgConn.OpenAsync();
                 return (true, "OK");
             }
             catch (Exception ex)
@@ -75,47 +75,57 @@ namespace HomToMadad.Services.SemanticLayer
 
         public static string BuildConnectionString(ConnectionEO conn)
         {
-            var b = new SqlConnectionStringBuilder
+            var b = new NpgsqlConnectionStringBuilder
             {
-                DataSource = conn.ServerName,
-                InitialCatalog = conn.DatabaseName,
-                TrustServerCertificate = true,
-                ConnectTimeout = 15
+                Host = conn.ServerName,
+                Database = conn.DatabaseName,
+                Username = conn.Username ?? "",
+                Password = conn.PasswordHash ?? "",
+                SslMode = SslMode.Prefer,
+                Timeout = 15,
+                TrustServerCertificate = true
             };
-            if (conn.AuthType == "Windows")
-                b.IntegratedSecurity = true;
-            else
-            {
-                b.UserID = conn.Username ?? "";
-                b.Password = conn.PasswordHash ?? "";
-            }
             return b.ConnectionString;
         }
 
-        private static async Task<List<SLTable>> ReadTablesAsync(SqlConnection conn)
+        private static async Task<List<SLTable>> ReadTablesAsync(NpgsqlConnection conn)
         {
             const string sql = @"
-SELECT t.name AS TableName, c.name AS ColumnName, tp.name AS DataType,
-       c.is_nullable AS IsNullable,
-       CASE WHEN pk.column_id IS NOT NULL THEN 1 ELSE 0 END AS IsPK,
-       CASE WHEN fk.parent_column_id IS NOT NULL THEN 1 ELSE 0 END AS IsFK
-FROM sys.tables t
-JOIN sys.columns c ON c.object_id = t.object_id
-JOIN sys.types tp ON tp.user_type_id = c.user_type_id
+SELECT 
+    t.table_name AS TableName,
+    c.column_name AS ColumnName,
+    c.data_type AS DataType,
+    CASE WHEN c.is_nullable = 'YES' THEN true ELSE false END AS IsNullable,
+    CASE WHEN tc.constraint_type = 'PRIMARY KEY' THEN 1 ELSE 0 END AS IsPK,
+    CASE WHEN fk.column_name IS NOT NULL THEN 1 ELSE 0 END AS IsFK
+FROM information_schema.tables t
+JOIN information_schema.columns c 
+    ON c.table_schema = t.table_schema AND c.table_name = t.table_name
 LEFT JOIN (
-    SELECT ic.object_id, ic.column_id FROM sys.index_columns ic
-    JOIN sys.indexes i ON i.object_id = ic.object_id AND i.index_id = ic.index_id
-    WHERE i.is_primary_key = 1
-) pk ON pk.object_id = c.object_id AND pk.column_id = c.column_id
+    SELECT kcu.table_schema, kcu.table_name, kcu.column_name, tc.constraint_type
+    FROM information_schema.table_constraints tc
+    JOIN information_schema.key_column_usage kcu 
+        ON kcu.constraint_name = tc.constraint_name 
+        AND kcu.table_schema = tc.table_schema
+    WHERE tc.constraint_type = 'PRIMARY KEY'
+) tc ON tc.table_schema = t.table_schema 
+    AND tc.table_name = t.table_name 
+    AND tc.column_name = c.column_name
 LEFT JOIN (
-    SELECT fkc.parent_object_id, fkc.parent_column_id
-    FROM sys.foreign_key_columns fkc
-) fk ON fk.parent_object_id = c.object_id AND fk.parent_column_id = c.column_id
-WHERE t.is_ms_shipped = 0
-ORDER BY t.name, c.column_id";
+    SELECT DISTINCT kcu.table_schema, kcu.table_name, kcu.column_name
+    FROM information_schema.table_constraints tc
+    JOIN information_schema.key_column_usage kcu 
+        ON kcu.constraint_name = tc.constraint_name 
+        AND kcu.table_schema = tc.table_schema
+    WHERE tc.constraint_type = 'FOREIGN KEY'
+) fk ON fk.table_schema = t.table_schema 
+    AND fk.table_name = t.table_name 
+    AND fk.column_name = c.column_name
+WHERE t.table_schema = 'public' AND t.table_type = 'BASE TABLE'
+ORDER BY t.table_name, c.ordinal_position";
 
             var map = new Dictionary<string, SLTable>(StringComparer.OrdinalIgnoreCase);
-            using var cmd = new SqlCommand(sql, conn);
+            using var cmd = new NpgsqlCommand(sql, conn);
             using var reader = await cmd.ExecuteReaderAsync();
 
             while (await reader.ReadAsync())
@@ -140,21 +150,26 @@ ORDER BY t.name, c.column_id";
             return map.Values.ToList();
         }
 
-        private static async Task<List<SLRelationship>> ReadForeignKeysAsync(SqlConnection conn)
+        private static async Task<List<SLRelationship>> ReadForeignKeysAsync(NpgsqlConnection conn)
         {
             const string sql = @"
-SELECT tp.name AS FromTable, cp.name AS FromColumn,
-       tr.name AS ToTable,   cr.name AS ToColumn
-FROM sys.foreign_key_columns fkc
-JOIN sys.tables  tp ON tp.object_id = fkc.parent_object_id
-JOIN sys.columns cp ON cp.object_id = fkc.parent_object_id AND cp.column_id = fkc.parent_column_id
-JOIN sys.tables  tr ON tr.object_id = fkc.referenced_object_id
-JOIN sys.columns cr ON cr.object_id = fkc.referenced_object_id AND cr.column_id = fkc.referenced_column_id
-WHERE tp.is_ms_shipped = 0
-ORDER BY tp.name, cp.name";
+SELECT 
+    kcu.table_name AS FromTable,
+    kcu.column_name AS FromColumn,
+    ccu.table_name AS ToTable,
+    ccu.column_name AS ToColumn
+FROM information_schema.referential_constraints rc
+JOIN information_schema.key_column_usage kcu 
+    ON kcu.constraint_name = rc.constraint_name 
+    AND kcu.table_schema = rc.constraint_schema
+JOIN information_schema.constraint_column_usage ccu 
+    ON ccu.constraint_name = rc.unique_constraint_name 
+    AND ccu.table_schema = rc.unique_constraint_schema
+WHERE kcu.table_schema = 'public'
+ORDER BY kcu.table_name, kcu.column_name";
 
             var list = new List<SLRelationship>();
-            using var cmd = new SqlCommand(sql, conn);
+            using var cmd = new NpgsqlCommand(sql, conn);
             using var reader = await cmd.ExecuteReaderAsync();
             while (await reader.ReadAsync())
             {
@@ -172,9 +187,9 @@ ORDER BY tp.name, cp.name";
         }
 
         private static bool IsProfilableType(string dt) =>
-            dt is "int" or "bigint" or "smallint" or "tinyint"
-               or "decimal" or "numeric" or "money" or "smallmoney"
-               or "float" or "real"
-               or "date" or "datetime" or "datetime2" or "smalldatetime";
+            dt is "integer" or "bigint" or "smallint"
+               or "decimal" or "numeric" or "money"
+               or "double precision" or "real"
+               or "date" or "timestamp without time zone" or "timestamp with time zone";
     }
 }

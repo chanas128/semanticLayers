@@ -33,7 +33,7 @@ namespace HomToMadad.Data.Data
                 entity.Property(e => e.AuthType).HasMaxLength(20).HasDefaultValue("SqlServer");
                 entity.Property(e => e.Username).HasMaxLength(100);
                 entity.Property(e => e.PasswordHash).HasMaxLength(500);
-                entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETDATE()");
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("NOW()");
                 entity.Property(e => e.LastTestResult).HasMaxLength(500);
             });
 
@@ -43,8 +43,8 @@ namespace HomToMadad.Data.Data
                 entity.ToTable("SL_SemanticLayers");
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.LayerJson).IsRequired();
-                entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETDATE()");
-                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("GETDATE()");
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("NOW()");
+                entity.Property(e => e.UpdatedAt).HasDefaultValueSql("NOW()");
                 entity.Property(e => e.CreatedBy).HasMaxLength(100);
 
                 entity.HasOne(e => e.Connection)

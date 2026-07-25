@@ -23,7 +23,7 @@ builder.Services.AddAuthorization();
 // DbContext
 builder.Services.AddScoped<AuditInterceptor>();
 builder.Services.AddDbContext<Context>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("AppDbConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("AppDbConnection")));
 
 // Repositories
 builder.Services.AddScoped<ConnectionsRepo>();

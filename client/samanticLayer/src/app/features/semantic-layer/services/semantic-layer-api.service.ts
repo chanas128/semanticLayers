@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 
 // ─── Models (matching backend DTOs) ────────────────────────────────────────
 
@@ -90,7 +91,7 @@ export interface QueryResult {
 @Injectable({ providedIn: 'root' })
 export class SemanticLayerApiService {
 
-  private baseUrl = 'http://localhost:5286/api'; // matches launchSettings.json
+  private baseUrl = environment.serverUrl.replace(/\/+$/, ''); // removes trailing slash
 
   constructor(private http: HttpClient) {}
 

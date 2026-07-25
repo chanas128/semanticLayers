@@ -1,7 +1,8 @@
 using HomToMadad.Common.Models;
 using HomToMadad.Common.Entities;
 using HomToMadad.Data.Repositories;
-using Microsoft.Data.SqlClient;
+using Npgsql;
+using NpgsqlTypes;
 
 namespace HomToMadad.Services.SemanticLayer
 {
@@ -19,10 +20,10 @@ namespace HomToMadad.Services.SemanticLayer
             var (sql, parameters) = BuildQuery(request);
 
             var connStr = DatabaseMetadataService.BuildConnectionString(conn);
-            using var sqlConn = new SqlConnection(connStr);
-            await sqlConn.OpenAsync();
+            using var pgConn = new NpgsqlConnection(connStr);
+            await pgConn.OpenAsync();
 
-            using var cmd = new SqlCommand(sql, sqlConn) { CommandTimeout = 30 };
+            using var cmd = new NpgsqlCommand(sql, pgConn) { CommandTimeout = 30 };
             foreach (var p in parameters)
                 cmd.Parameters.Add(p);
 
@@ -45,16 +46,16 @@ namespace HomToMadad.Services.SemanticLayer
             return result;
         }
 
-        private static (string sql, List<SqlParameter> parameters) BuildQuery(QueryRequestDTO req)
+        private static (string sql, List<NpgsqlParameter> parameters) BuildQuery(QueryRequestDTO req)
         {
             // Validate table and column names (whitelist: letters, digits, underscore)
             ValidateName(req.TableName);
             foreach (var col in req.SelectedColumns) ValidateName(col);
 
-            var cols = string.Join(", ", req.SelectedColumns.Select(c => $"[{c}]"));
-            var sql = $"SELECT TOP ({req.MaxRows}) {cols} FROM [{req.TableName}]";
+            var cols = string.Join(", ", req.SelectedColumns.Select(c => $"\"{c}\""));
+            var sql = $"SELECT {cols} FROM \"{req.TableName}\"";
 
-            var parameters = new List<SqlParameter>();
+            var parameters = new List<NpgsqlParameter>();
             var whereClauses = new List<string>();
 
             for (int i = 0; i < req.Filters.Count; i++)
@@ -67,13 +68,13 @@ namespace HomToMadad.Services.SemanticLayer
                 {
                     case "BETWEEN":
                         var paramTo = $"@p{i}to";
-                        whereClauses.Add($"[{f.Column}] BETWEEN {paramName} AND {paramTo}");
-                        parameters.Add(new SqlParameter(paramName, f.Value));
-                        parameters.Add(new SqlParameter(paramTo, f.ValueTo ?? f.Value));
+                        whereClauses.Add($"\"{f.Column}\" BETWEEN {paramName} AND {paramTo}");
+                        parameters.Add(new NpgsqlParameter(paramName, f.Value));
+                        parameters.Add(new NpgsqlParameter(paramTo, f.ValueTo ?? f.Value));
                         break;
                     case "LIKE":
-                        whereClauses.Add($"[{f.Column}] LIKE {paramName}");
-                        parameters.Add(new SqlParameter(paramName, $"%{f.Value}%"));
+                        whereClauses.Add($"\"{f.Column}\" ILIKE {paramName}");
+                        parameters.Add(new NpgsqlParameter(paramName, $"%{f.Value}%"));
                         break;
                     default:
                         // =, >, <, >=, <=
@@ -82,14 +83,17 @@ namespace HomToMadad.Services.SemanticLayer
                             ">" => ">", "<" => "<", ">=" => ">=", "<=" => "<=",
                             _ => "="
                         };
-                        whereClauses.Add($"[{f.Column}] {op} {paramName}");
-                        parameters.Add(new SqlParameter(paramName, f.Value));
+                        whereClauses.Add($"\"{f.Column}\" {op} {paramName}");
+                        parameters.Add(new NpgsqlParameter(paramName, f.Value));
                         break;
                 }
             }
 
             if (whereClauses.Count > 0)
                 sql += " WHERE " + string.Join(" AND ", whereClauses);
+
+            // PostgreSQL uses LIMIT instead of TOP
+            sql += $" LIMIT {req.MaxRows}";
 
             return (sql, parameters);
         }

@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  serverUrl: "http://" + window.location.host + "/api/"
+  serverUrl: "https://RENDER_URL_HERE/api/"  // TODO: replace with your Render URL
 };
