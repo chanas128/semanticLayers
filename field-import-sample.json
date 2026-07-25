@@ -1,0 +1,14 @@
+[
+  { "TableName": "Customers", "ColumnName": "FullName", "Value": "שם מלא של הלקוח, כפי שהוזן בעת ההרשמה" },
+  { "TableName": "Customers", "ColumnName": "Email", "Value": "כתובת דוא\"ל ליצירת קשר ולשליחת עדכוני הזמנה" },
+  { "TableName": "Customers", "ColumnName": "City", "Value": "עיר המגורים של הלקוח, משמשת לניתוח פילוח גאוגרפי" },
+  { "TableName": "Customers", "ColumnName": "JoinDate", "Value": "תאריך ההצטרפות של הלקוח למערכת" },
+  { "TableName": "Products", "ColumnName": "Name", "Value": "שם המוצר כפי שמוצג בקטלוג" },
+  { "TableName": "Products", "ColumnName": "Category", "Value": "קטגוריית המוצר (למשל: אלקטרוניקה, ביגוד, בית וגן)" },
+  { "TableName": "Products", "ColumnName": "Price", "Value": "מחיר המוצר ליחידה, לפני מע\"מ" },
+  { "TableName": "Products", "ColumnName": "StockQuantity", "Value": "כמות המלאי הזמינה במחסן נכון לרגע זה" },
+  { "TableName": "Orders", "ColumnName": "OrderDate", "Value": "תאריך ביצוע ההזמנה על ידי הלקוח" },
+  { "TableName": "Orders", "ColumnName": "Status", "Value": "סטטוס ההזמנה: ממתינה / נשלחה / הושלמה / בוטלה" },
+  { "TableName": "OrderItems", "ColumnName": "Quantity", "Value": "כמות היחידות שהוזמנו מהמוצר בשורת הזמנה זו" },
+  { "TableName": "OrderItems", "ColumnName": "UnitPrice", "Value": "מחיר יחידה בפועל בעת ביצוע ההזמנה (עשוי להיות שונה ממחיר המוצר הנוכחי)" }
+]

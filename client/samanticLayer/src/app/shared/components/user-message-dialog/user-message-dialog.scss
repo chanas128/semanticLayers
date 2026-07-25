@@ -1,0 +1,142 @@
+.dialog-content {
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    font-family: var(--fontB);
+
+    align-items: center;
+    height: 10rem;
+    justify-content: space-between;
+
+    overflow: hidden;
+
+    .icon {
+        align-items: center;
+        width: 60%;
+        height: 20%;
+        font-size: xx-large
+    }
+
+    .message {
+        color: black;
+        /* להבטיח שהטקסט יהיה שחור */
+    }
+
+    &.error .icon {
+        color: #f44336;
+    }
+
+    &.success .icon {
+        color: #4caf50;
+    }
+
+    &.info .icon {
+        color: #2196f3;
+    }
+
+    &.warning .icon {
+        color: #ff9800;
+    }
+    &.question .icon {
+  color: #99c1ee; 
+}
+}
+
+.buttons {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 2rem;
+    transform: translate(-45px);
+    /* מזיז 50px ימינה (X), 100px למטה (Y) */
+
+    button {
+        background-color: #143D52;
+        color: white;
+        padding: 8px 20px;
+        border-radius: 8px;
+        font-family: var(--font);
+        transition: background-color 0.3s ease;
+
+        &:hover {
+            background-color: #0f2e3d;
+        }
+
+        &.disabled {
+            background-color: #ccc;
+            color: #666;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+
+        &:first-child {
+            margin-left: 1rem;
+        }
+
+        &:last-child {
+            margin-left: 6rem;
+        }
+
+    }
+}
+
+.iconDiv {
+    display: flex;
+    height: 100%;
+    background-color: #143D52;
+    align-items: center;
+    width: 40%;
+    justify-content: center;
+}
+
+.massegeDiv {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    flex-direction: column;
+    justify-content: center;
+
+}
+
+.dialog-content.long-message-layout {
+    display: flex;
+    flex-direction: row;
+    height: auto;
+    align-items: stretch; // מותח את iconDiv לכל גובה הדיאלוג
+    min-height: 10rem;
+    overflow: hidden;
+    direction: rtl;
+
+    .iconDiv {
+              display: flex;
+        background-color: #143D52;
+        align-items: center;    // ממקם את האייקון במרכז האנכי של הפס הכחול
+        justify-content: center;
+        width: 30%;
+        min-width: 80px;
+        height: auto;           // לא להשתמש ב-100%, ה-stretch של האבא עושה את העבודה
+        flex-shrink: 0;  
+    }
+
+    .icon {
+        font-size: 50px;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+
+    .massegeDiv {
+        display: flex;
+        flex-direction: column;
+        justify-content: center; 
+        align-items: center;     // ממרכז את כל גושי הטקסט והרשימות
+        padding: 20px;
+        flex-grow: 1;
+        // text-align: center;      // ממרכז את הכותרות והפסקאות
+        width: 70%;
+    }
+
+}

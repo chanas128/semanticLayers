@@ -1,0 +1,24 @@
+<div class="dialog-content" [ngClass]="[data.type, data.customClass ? data.customClass : '']">
+
+  <div class="massegeDiv">
+        <mat-icon class="icon">
+      {{ data.type === 'error' ? 'pan_tool' :
+      data.type === 'success' ? 'check' :
+      data.type === 'info' ? 'info' :
+      data.type === 'question' ? 'quiz' :
+      'warning' }}
+    </mat-icon>
+    <div class="message" [innerHTML]="data.message"></div>
+    <div class="buttons">
+      <ng-container *ngIf="data.type === 'question'; else simpleClose">
+        <button mat-raised-button color="primary" (click)="confirm()">אישור</button>
+        <button mat-button (click)="close()">ביטול</button>
+      </ng-container>
+
+      <ng-template #simpleClose>
+        <button mat-raised-button color="primary" (click)="close()">סגור</button>
+      </ng-template>
+    </div>
+
+  </div>
+</div>

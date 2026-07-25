@@ -1,0 +1,247 @@
+
+/* גלובלי */
+html, body {
+  font-family: var(--font);
+  direction: rtl;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  background-color: #f1f1f1 !important; /* רקע כללי של כל הדף */
+}
+
+app-dashboard {
+  display: block;
+  // min-height: 100vh;
+  background-color: #f1f1f1; /* דואג לרקע גם בתוך הקומפוננטה */
+}
+
+
+
+@font-face {
+  font-family: 'Rubik';
+  src: 
+       url('./assets/fonts/Rubik/static/Rubik-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Rubik-bold';
+  src: 
+       url('./assets/fonts/Rubik/static/Rubik-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* ---- Material Icons ---- */
+/* Material Icons */
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+     src:    url('./assets/fonts/material-symbols-outlined.woff2') format('woff2'),
+}
+
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
+
+
+
+
+/* ---- צבעים והגדרות עיצוב ---- */
+:root {
+  --color-dark-blue: #0A3546;
+  --color-grey-dark: #535862;
+  --color-light-grey: #F1F1F1;
+  --color-deep-navy: #181D27;
+  --color-white: #FFFFFF;
+  --color-grey-border: #D1D2D3;
+  --color-lightest-grey: #FAFAFA;
+  --color-green: #047244;
+  --color-orange-dark: #D97008;
+  --color-orange-light: #FFB871;
+  --color-orange-pale: #F7D197;
+  --color-navy-blue: #143D52;
+  --color-pink-dark: #97115B;
+  --color-blue-grey: #2C5A70;
+  --color-blue-lightest: #DEEEF2;
+  --color-green-light: #A5EBC2;
+  --color-pink-light: #FEE7F6;
+  --color-blue-extra-light: #E3F2FC;
+  --color-orange-vivid: #F89430;
+  --color-pink-bright: #DC1884;
+  --color-green-bright: #08E287;
+  --color-grey-medium: #929292;
+  --font: 'Rubik';
+  --fontB: 'Rubik-bold';
+
+  --purple-main: #5E35B1;
+  --purple-dark: #A03AC3;
+  --purple-mid:  #BF6EFF;
+  --purple-light: #F1D1FF;
+  --purple-pale: #f0e9fa;
+  --purple-hot:  #E97EFF;
+  --purple-cool: #B07CFF;
+
+  --purplePro:#5E35B1;
+  --bluePro:#0794f8;
+  --greenPro:#33B68C;
+
+  --backgroundColor: #f5f5f5;  /* רקע המסך */
+  --TableHeader: #FAFAFA;      /* רקע כותרת */
+  --borderBG: #F1F1F1;         /* גבולות בין תאים/שורות */
+  --SelectRow: #ebebeb;     /* רקע שורה מודגשת בטבלה */
+  --headerTitle: #033841;      /* צבע טקסט בכותרת */
+  --TextColor: #181D27;        /* צבע טקסט רגיל */
+}
+
+/* ---- עיצוב פס גלילה לאוטוקומפליט ---- */
+.mat-mdc-autocomplete-panel {
+  max-height: 250px !important;
+  overflow-y: auto !important;
+
+  /* Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: #555 transparent;
+}
+
+/* Chrome + Edge */
+.mat-mdc-autocomplete-panel::-webkit-scrollbar {
+  width: 0.2rem;
+  height: 0.2rem;
+}
+
+.mat-mdc-autocomplete-panel::-webkit-scrollbar-thumb {
+  background: #555;
+  cursor: pointer;
+  border-radius: 1rem;
+}
+
+.mat-mdc-autocomplete-panel::-webkit-scrollbar-button {
+  display: none !important;
+  height: 0;
+  width: 0;
+  visibility: hidden !important;
+}
+
+
+/* styles.scss (הקובץ הגלובלי הראשי) */
+
+/* 1. אכיפת יישור ימין מלא על העורך */
+/* נשים לב שה-text-align: left שמגיע מ-ql-editor רגיל הוא הבעיה */
+.ql-editor {
+    text-align: right !important; /* דורס את text-align: left המקורי */
+}
+
+/* 2. דריסת ה-LI הבעייתי */
+.ql-editor li {
+    /* ביטול מוחלט של הרווח השמאלי */
+    padding-left: 0 !important;
+    
+    /* הוספת הרווח הדרוש בצד ימין */
+    padding-right: 1.5em !important;
+    
+    /* מוודא שהמספר/בולט ממוקם יחסית לימין */
+    position: relative !important;
+}
+
+/* 3. דריסת האלמנט הנסתר שמייצר את המספר (::before) */
+/* זה התיקון שמונע את החפיפה: */
+.ql-editor li::before {
+    /* מבטל את השוליים השמאליים השליליים (LTR) */
+    margin-left: 0 !important; 
+    
+    /* יוצר שוליים שליליים מימין כדי למקם את המספר בתוך ה-padding-right */
+    margin-right: -1.5em !important; 
+    
+    /* מוודא שהמספר מיושר נכון בתוך המרווח */
+    text-align: right !important; 
+    
+    /* מונע מהמספר להיעלם בגלל תנועה */
+    display: inline-block !important;
+    width: 1.5em !important;
+}
+
+/* 4. תיקון הזחות פנימיות (Indentation) */
+.ql-editor .ql-indent-1 {
+    padding-right: 3em !important;
+    padding-left: 0 !important;
+}
+.ql-editor .ql-indent-2 {
+    padding-right: 4.5em !important;
+    padding-left: 0 !important;
+}
+/* styles.scss או styles.css */
+
+.instruction-trigger {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* אם תרצה להשפיע גם על האייקון שבפנים דרך הסטייל הראשי */
+.instruction-trigger .instruction-icon__icon {
+    /* עיצוב נוסף כאן */
+}
+
+/* styles.scss */
+
+// ייבוא העיצוב של Quill באופן גלובלי
+@import 'quill/dist/quill.snow.css';
+@import 'quill/dist/quill.core.css';
+
+// הגדרת תצוגת הקריאה כדי שתיראה בדיוק כמו בעריכה
+.ql-editor.read-only {
+    padding: 0;
+    min-height: auto;
+    background: transparent;
+    border: none;
+    pointer-events: auto; /* מאפשר לחיצה על לינקים אם יש */
+    
+    // תיקון כיווניות לרשימות במספור בעברית
+    ol, ul {
+        padding-right: 1.5em;
+        padding-left: 0;
+        text-align: right;
+    }
+}
+
+/* styles.scss */
+
+.step1-container {
+  .curves {
+    pointer-events: none;
+  }
+
+  .instruction-trigger {
+    pointer-events: auto !important;
+    cursor: pointer;
+    position: relative;
+    z-index: 10;
+  }
+
+  .button-group {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+  }
+}
+

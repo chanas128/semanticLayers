@@ -1,0 +1,27 @@
+## === Root .gitignore for HomToMadad/semanticLayer ===
+
+## ----- .NET (server) -----
+server/**/bin/
+server/**/obj/
+server/.vs/
+
+## ----- Node / Angular (client) -----
+client/**/node_modules/
+client/**/dist/
+client/**/.angular/cache/
+
+## ----- IDE -----
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+
+## ----- OS -----
+.DS_Store
+Thumbs.db
+desktop.ini
+
+## ----- Misc -----
+*.log
+*.msi

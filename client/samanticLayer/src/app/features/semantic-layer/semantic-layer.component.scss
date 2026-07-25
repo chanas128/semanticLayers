@@ -1,0 +1,210 @@
+/**
+ * semantic-layer.component.scss
+ * Modern Minimalist Workspace — תיקון גובה + footer תמיד גלוי
+ */
+
+// ─── Workspace fills full height from app-content ────────────────────────────
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.sl-workspace {
+  direction: rtl;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  padding: 20px;
+  background: #f0f4f7;
+  box-sizing: border-box;
+  overflow: hidden;   /* הגלילה מנוהלת על ידי sl-content בפנים */
+}
+
+// ─── Main Card — flex column, ממלא גובה ──────────────────────────────────────
+.sl-card {
+  width: 100%;
+  max-width:1300px;
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(10, 53, 70, 0.06),
+              0 4px  12px rgba(10, 53, 70, 0.04);
+  padding: 28px 32px 24px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+// ─── Step Tabs ────────────────────────────────────────────────────────────────
+.sl-tabs {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding-bottom: 18px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 0;
+}
+
+.sl-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 7px 16px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: #94a8b3;
+  font-size: 0.82rem;
+  font-family: var(--font);
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.18s, color 0.18s;
+  outline: none;
+
+  .sl-tab__icon {
+    font-size: 17px;
+    width: 17px;
+    height: 17px;
+  }
+
+  &:hover:not(.disabled) {
+    background: #f0faff;
+    color: #2a8fba;
+  }
+
+  &.visited {
+    color: #2a8fba;
+    .sl-tab__icon { color: #2a8fba; }
+  }
+
+  &.active {
+    background: #e8f7fd;
+    color: #3cb8e6;
+    font-weight: 700;
+    .sl-tab__icon { color: #3cb8e6; }
+  }
+
+  &.disabled {
+    opacity: 0.35;
+    pointer-events: none;
+  }
+}
+
+.sl-tab-sep {
+  width: 1px;
+  height: 18px;
+  background: rgba(0, 0, 0, 0.07);
+  flex-shrink: 0;
+  margin: 0 4px;
+}
+
+// ─── Step Content — גלילה פנימית, ממלא שטח פנוי ─────────────────────────────
+.sl-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  scrollbar-width: thin;
+  scrollbar-color: #c4e8f5 transparent;
+
+  &::-webkit-scrollbar       { width: 5px; }
+  &::-webkit-scrollbar-thumb { background: #c4e8f5; border-radius: 4px; }
+
+  > app-sl-step1,
+  > app-sl-step2,
+  > app-sl-step3,
+  > app-sl-step4 {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+}
+
+// ─── Footer — תמיד גלוי בתחתית הכרטיסייה ────────────────────────────────────
+.sl-footer {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 20px;
+  margin-top: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+// ─── Buttons ──────────────────────────────────────────────────────────────────
+.sl-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  height: 40px;
+  padding: 0 1.3rem;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-family: var(--font);
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+
+  &:active:not(:disabled) { transform: scale(0.97); }
+
+  &--primary {
+    background: #3cb8e6;
+    color: #ffffff;
+    box-shadow: 0 3px 10px rgba(60, 184, 230, 0.3);
+
+    &:hover:not(:disabled) {
+      background: #2a8fba;
+      box-shadow: 0 5px 14px rgba(42, 143, 186, 0.38);
+    }
+  }
+
+  &--ghost {
+    background: transparent;
+    color: #2a8fba;
+    border: 1.5px solid rgba(42, 143, 186, 0.4);
+
+    &:hover { background: #f0faff; border-color: #2a8fba; }
+  }
+
+  &--disabled,
+  &:disabled {
+    background: #e4e4e4 !important;
+    color: #aaa !important;
+    box-shadow: none !important;
+    cursor: not-allowed !important;
+    pointer-events: none;
+  }
+}
+
+// ─── Tooltip ──────────────────────────────────────────────────────────────────
+::ng-deep .mat-mdc-tooltip-surface {
+  text-align: center !important;
+  border: 1.5px solid #2a8fba !important;
+  color: #0A3546 !important;
+  background-color: #e8f7fd !important;
+  font-family: var(--font) !important;
+  font-weight: 600 !important;
+  font-size: 0.78rem !important;
+}
+
+// ─── Responsive ───────────────────────────────────────────────────────────────
+@media (max-width: 768px) {
+  .sl-workspace { padding: 10px; }
+  .sl-card      { padding: 16px 14px 14px; border-radius: 16px; }
+  .sl-tab__label { display: none; }
+  .sl-tab-sep    { display: none; }
+}

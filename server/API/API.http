@@ -1,0 +1,6 @@
+@HomToMadad.API_HostAddress = http://localhost:5286
+
+GET {{HomToMadad.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,689 @@
+/**
+ * sl-step.shared.scss
+ * ━━━━━━━━━━━━━━━━━━━
+ * סגנון משותף לכל קומפוננטות השלבים — Modern Minimalist.
+ * הקומפוננטות רצות בתוך .sl-content של הכרטיסייה הראשית.
+ * אין split-screen, אין SVG קישוטים — תוכן נקי ומלא-רוחב.
+ *
+ * צבעי רקע per-step (inline style על .step-bg):
+ *   שלב 1 → #f0faff   שלב 2 → #edf7fb
+ *   שלב 3 → #e8f5f9   שלב 4 → #e3f2f7
+ */
+
+// ─── Host ─────────────────────────────────────────────────────────────────────
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+// ─── Step container ───────────────────────────────────────────────────────────
+.step-container {
+  direction: rtl;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+// ─── Colored background area (per-step tint, inline bg) ───────────────────────
+.step-bg {
+  flex: 1 1 auto;
+  // min-height: 200px;
+  border-radius: 16px;
+  padding: 36px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+// ─── כפתור הנחיות ─────────────────────────────────────────────────────────────
+.button-group {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 10;
+}
+
+.icon-box {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+
+  &:hover { background: #fff; }
+
+  mat-icon {
+    font-size: 17px;
+    width: 17px;
+    height: 17px;
+    color: #2a8fba;
+  }
+}
+
+// ─── Step content ─────────────────────────────────────────────────────────────
+.step-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 680px;
+
+}
+
+.step-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #0A3546;
+  font-family: var(--fontB, var(--font));
+  margin: 0 0 0.5rem;
+  letter-spacing: -0.01em;
+}
+
+.step-description {
+  font-size: 0.9rem;
+  color: #4a7080;
+  font-family: var(--font);
+  line-height: 1.65;
+  margin: 0 0 1.5rem;
+}
+
+// ─── Placeholder area ─────────────────────────────────────────────────────────
+.placeholder-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 2rem 1.5rem;
+  border: 1.5px dashed rgba(42, 143, 186, 0.3);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.6);
+  width: 100%;
+  max-width: 560px;
+  transition: border-color 0.2s;
+
+  &:hover { border-color: rgba(42, 143, 186, 0.5); }
+}
+
+.placeholder-icon {
+  font-size: 2.6rem;
+  width: 2.6rem;
+  height: 2.6rem;
+  color: #3cb8e6;
+  opacity: 0.7;
+}
+
+.placeholder-text {
+  color: #7aa8b8;
+  font-size: 0.85rem;
+  font-family: var(--font);
+  text-align: center;
+  line-height: 1.55;
+}
+
+// ─── Finish / Completion step ─────────────────────────────────────────────────
+.finish-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+
+  .finish-icon {
+    font-size: 3.2rem;
+    width: 3.2rem;
+    height: 3.2rem;
+    color: #2a8fba;
+    margin-bottom: 0.2rem;
+  }
+
+  h2 {
+    font-size: 1.9rem;
+    font-weight: 800;
+    color: #0A3546;
+    font-family: var(--fontB, var(--font));
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+
+  p {
+    font-size: 1rem;
+    color: #4a7080;
+    margin: 0;
+    font-family: var(--font);
+  }
+}
+
+.side-icon {
+  color: #3cb8e6;
+  opacity: 0.55;
+  position: relative;
+  z-index: 1;
+}
+
+// ─── Responsive ───────────────────────────────────────────────────────────────
+@media (max-width: 600px) {
+  .step-bg { padding: 24px 20px; }
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  Step 1 — Connection form + scan results
+// ═══════════════════════════════════════════════════════════════════════════════
+
+.conn-form {
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: right;
+}
+
+.field-full { width: 100%; }
+
+.field-row {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.field-half { flex: 1; }
+
+.conn-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.75rem;
+}
+
+.btn-primary {
+  background: #3cb8e6 !important;
+  color: #fff !important;
+  border-radius: 10px !important;
+  font-family: var(--font) !important;
+  font-weight: 600 !important;
+  padding: 0 1.5rem !important;
+  height: 42px !important;
+  display: inline-flex !important;
+  align-items: center;
+  gap: 0.4rem;
+
+  mat-icon { font-size: 20px; width: 20px; height: 20px; }
+  mat-spinner { margin-left: 0.3rem; }
+
+  &:hover:not(:disabled) { background: #2a8fba !important; }
+  &:disabled { background: #c0c0c0 !important; }
+}
+
+.conn-error {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  color: #b91c1c;
+  font-size: 0.82rem;
+
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+}
+
+// ─── Scan results ────────────────────────────────────────────────────────────
+
+.scan-results {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 0.5rem;
+}
+
+.scan-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+}
+
+.scan-header__info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.scan-header__icon {
+  font-size: 2rem;
+  width: 2rem;
+  height: 2rem;
+  color: #059669;
+}
+
+.scan-header__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #065f46;
+  font-family: var(--fontB, var(--font));
+}
+
+.scan-header__sub {
+  margin: 0.2rem 0 0;
+  font-size: 0.82rem;
+  color: #047857;
+}
+
+.btn-ghost-sm {
+  color: #2a8fba !important;
+  font-size: 0.78rem !important;
+  font-family: var(--font) !important;
+}
+
+// ─── Table expansion panel ───────────────────────────────────────────────────
+
+.table-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #2a8fba;
+  margin-left: 0.4rem;
+}
+
+.table-name {
+  font-weight: 600;
+  color: #0A3546;
+  font-family: var(--fontB, var(--font));
+}
+
+.col-count {
+  font-size: 0.7rem !important;
+  min-height: 22px !important;
+  padding: 0 8px !important;
+  margin-right: auto !important;
+  margin-left: 0.5rem !important;
+}
+
+// ─── Column grid inside expansion panel ──────────────────────────────────────
+
+.columns-grid {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.78rem;
+  overflow-x: auto;
+}
+
+.col-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 40px 40px 1fr 1fr 80px;
+  gap: 0.25rem;
+  padding: 0.4rem 0.5rem;
+  align-items: center;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+
+  &--header {
+    font-weight: 700;
+    color: #6b7280;
+    background: #f9fafb;
+    border-radius: 6px;
+    border-bottom: none;
+  }
+}
+
+.col-name {
+  font-weight: 600;
+  color: #1e6a8a;
+}
+
+.col-type {
+  color: #6b7280;
+  font-family: monospace;
+  font-size: 0.72rem;
+}
+
+.col-badge {
+  font-size: 14px;
+  width: 14px;
+  height: 14px;
+  color: #f59e0b;
+
+  &.fk { color: #8b5cf6; }
+}
+
+.col-stat {
+  color: #6b7280;
+  font-size: 0.72rem;
+  text-align: center;
+}
+
+// ─── Relationships summary ───────────────────────────────────────────────────
+
+.relationships-box {
+  background: #f8fafc;
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+
+  h4 {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0 0 0.75rem;
+    font-size: 0.9rem;
+    color: #1e6a8a;
+    font-family: var(--fontB, var(--font));
+
+    mat-icon { font-size: 18px; width: 18px; height: 18px; }
+  }
+}
+
+.rel-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0;
+  font-size: 0.8rem;
+  color: #374151;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+
+  mat-icon { font-size: 16px; width: 16px; height: 16px; color: #9ca3af; }
+
+  &:last-child { border-bottom: none; }
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  Step 2 — Edit display names + confirm relationships
+// ═══════════════════════════════════════════════════════════════════════════════
+
+.edit-layer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 0.5rem;
+}
+
+.edit-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+
+  .step-title { margin: 0; }
+  .step-description { flex: 1; margin: 0; min-width: 200px; }
+}
+
+.display-name-preview {
+  margin-right: 0.5rem;
+  font-size: 0.78rem;
+  color: #059669;
+  font-weight: 400;
+}
+
+.edit-row {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+// ─── Columns edit grid ───────────────────────────────────────────────────────
+
+.columns-edit {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.8rem;
+}
+
+.col-edit-row {
+  display: grid;
+  grid-template-columns: 1.5fr 2fr 2.5fr;
+  gap: 0.5rem;
+  padding: 0.35rem 0.25rem;
+  align-items: center;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+
+  &--header {
+    font-weight: 700;
+    color: #6b7280;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+  }
+}
+
+.col-input {
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.78rem;
+  font-family: var(--font);
+  outline: none;
+  transition: border-color 0.2s;
+
+  &:focus { border-color: #3cb8e6; }
+}
+
+// ─── Relationship confirm ────────────────────────────────────────────────────
+
+.rel-desc {
+  font-size: 0.8rem;
+  color: #6b7280;
+  margin: 0 0 0.5rem;
+}
+
+.rel-confirm-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0;
+  font-size: 0.8rem;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+
+  mat-icon { font-size: 16px; width: 16px; height: 16px; color: #9ca3af; }
+  &:last-child { border-bottom: none; }
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  Step 3 — Query builder + results
+// ═══════════════════════════════════════════════════════════════════════════════
+
+.query-builder {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 0.5rem;
+}
+
+.qb-row { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+.qb-table-select { min-width: 300px; }
+
+.qb-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1e6a8a;
+  margin-bottom: 0.3rem;
+  display: block;
+}
+
+.qb-columns {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.qb-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  font-size: 0.82rem;
+}
+
+.tech-hint {
+  font-size: 0.7rem;
+  color: #9ca3af;
+  margin-right: 0.2rem;
+}
+
+.qb-filter { display: flex; flex-direction: column; gap: 0.3rem; }
+.qb-filter-row { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: flex-start; }
+.qb-field-sm { min-width: 160px; max-width: 200px; }
+.qb-field-xs { min-width: 100px; max-width: 130px; }
+
+.qb-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.qb-hint {
+  font-size: 0.78rem;
+  color: #9ca3af;
+}
+
+// ─── Results ─────────────────────────────────────────────────────────────────
+
+.qb-results {
+  margin-top: 0.5rem;
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.qb-results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 1rem;
+  background: #f8fafc;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  font-size: 0.82rem;
+  color: #374151;
+}
+
+.qb-sql {
+  font-size: 0.7rem;
+  color: #6b7280;
+  background: #f1f5f9;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  max-width: 400px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: help;
+}
+
+.qb-table-wrapper {
+  overflow-x: auto;
+  max-height: 360px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #c4e8f5 transparent;
+}
+
+.qb-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+
+  th, td {
+    padding: 0.5rem 0.75rem;
+    text-align: right;
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+    white-space: nowrap;
+  }
+
+  th {
+    background: #f0f9ff;
+    font-weight: 700;
+    color: #1e6a8a;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  tbody tr:hover { background: #f8fafc; }
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════════════
+//  Step 4 — Summary + Export
+// ═══════════════════════════════════════════════════════════════════════════════
+
+.step4-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 0.5rem;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.summary-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 1.25rem 1rem;
+  background: #f8fafc;
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 14px;
+  text-align: center;
+  transition: box-shadow 0.2s;
+
+  &:hover { box-shadow: 0 4px 12px rgba(42,143,186,0.1); }
+
+  mat-icon {
+    font-size: 1.8rem;
+    width: 1.8rem;
+    height: 1.8rem;
+    color: #2a8fba;
+  }
+}
+
+.summary-value {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #0A3546;
+  font-family: var(--fontB, var(--font));
+}
+
+.summary-label {
+  font-size: 0.78rem;
+  color: #6b7280;
+}
+
+.export-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.btn-disabled {
+  background: #e5e7eb !important;
+  color: #9ca3af !important;
+  border-radius: 10px !important;
+  font-family: var(--font) !important;
+  cursor: not-allowed !important;
+
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+}
