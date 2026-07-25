@@ -82,8 +82,7 @@ namespace HomToMadad.Services.SemanticLayer
                 Username = conn.Username ?? "",
                 Password = conn.PasswordHash ?? "",
                 SslMode = SslMode.Prefer,
-                Timeout = 15,
-                TrustServerCertificate = true
+                Timeout = 15
             };
             return b.ConnectionString;
         }
