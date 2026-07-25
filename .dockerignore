@@ -1,0 +1,12 @@
+**/.vs
+**/bin
+**/obj
+**/node_modules
+**/dist
+**/.angular
+**/.git
+*.msi
+client/
+SQL/
+README.md
+.gitignore
